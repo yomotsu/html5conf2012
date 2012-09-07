@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>webgl demo</title>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var canvas = document.querySelector('#glcanvas');
+  var gl = canvas.getContext('experimental-webgl');
+  
+  var vShaderSource = [
+    // gl_Position は同次座標系 vec4(x, y, z, w);
+    'attribute vec4 a_Position;',
+    'void main(){',
+    '  gl_Position = a_Position;',
+    '}'
+  ].join('\n');
+ 
+  var fShaderSource = [
+    // gl_FragColor は色 vec4(red, green, blur, alpha);
+    'void main(){',
+    '  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);',
+    '}'
+  ].join('\n');
+ 
+  // 頂点シェーダーを作成する
+  var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+  // 頂点シェーダーにソースコードを指定する
+  gl.shaderSource(vertexShader, vShaderSource);
+  // 頂点シェーダーをコンパイルする
+  gl.compileShader(vertexShader);
+ 
+  // フラグメントシェーダを作成する
+  var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+  // フラグメントシェーダーにソースコードを指定する
+  gl.shaderSource(fragmentShader, fShaderSource);
+  // フラグメントシェーダをコンパイルする
+  gl.compileShader(fragmentShader);
+ 
+  // シェーダープログラムを作成する
+  var program = gl.createProgram();
+  // シェーダープログラムにコンパイルした各シェーダを追加する
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  // シェーダープログラムに追加されたシェーダをリンクする
+  gl.linkProgram(program);
+  // ここまでで設定したシェーダープログラムを描画時に利用する
+  gl.useProgram(program);
+  gl.program = program;
+ 
+  //頂点
+  var vertices = new Float32Array([
+     0.0,  0.5, 0.0,
+    -0.5, -0.5, 0.0,
+     0.5, -0.5, 0.0
+  ]);
+  // 頂点の数
+  var verticesLength = 3;
+ 
+  // VBOを作成する
+  var vertexBuffer = gl.createBuffer();
+ 
+  // VBOをコンテキストにバインドしてカレントにする
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  // カレントのバッファー(VBO)にデータを転送する
+  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+ 
+  var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+  // a_Position変数にカレントのバッファーを割り当てる
+  gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
+  // a_Position変数でのバッファーの割り当てを有効化する
+  gl.enableVertexAttribArray(a_Position);
+	
+	// Canvasをクリアする色を設定する
+	gl.clearColor(0.0, 0.0, 0.0, 1.0);
+	// Canvasをクリアする
+	gl.clear(gl.COLOR_BUFFER_BIT);
+
+  // 三角形(TRIANGLES)描画モードで0番目から
+  // verticesLength個の頂点を描画
+  gl.drawArrays(gl.TRIANGLES, 0, verticesLength);
+ 
+}, false); // addEventLitener のおわり
+ 
+</script>
+</head>
+<body>
+ 
+<canvas id="glcanvas" width="500" height="500"></canvas>
+ 
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>three demo</title>
+<script src="three.min.js"></script>
+<script>
+window.addEventListener("DOMContentLoaded", function(){
+  //描画領域の大きさに利用する
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+
+  //レンダラーを設定
+  var renderer = new THREE.WebGLRenderer();
+  //レンダラーのサイズは当初設定したwidthとheightと同じに
+  renderer.setSize( width, height );
+  //HTMLのbody要素直下の子要素としてレンダラーを追加
+  document.body.appendChild( renderer.domElement );
+ 
+  //シーンを設定
+  var scene = new THREE.Scene();
+ 
+  //カメラを設定
+  var fov  = 80;
+  var aspect = width / height;
+  var near   = 1;
+  var far  = 1000;
+  var camera =    new THREE.PerspectiveCamera( fov, aspect, near, far );
+  //カメラの位置を手前に500移動    camera.position.z = 500;
+  //カメラをシーンに追加
+  scene.add( camera );
+ 
+  //光源を設定
+  var directionalLight =   new THREE.DirectionalLight( 0xffffff, 3 );
+  directionalLight.position.z = 3;
+  //光源をシーンに追加
+  scene.add( directionalLight );
+ 
+  //横幅、高さ、奥行きが200の立方体のジオメトリーを設定
+  var geometry = new THREE.CubeGeometry(200, 200, 200);
+  //マテリアルを設定
+  var material = new THREE.MeshLambertMaterial({color: 0x660000});
+  //メッシュを作成
+  var cubeMesh = new THREE.Mesh( geometry, material);
+  //メッシュをシーンに追加
+  scene.add( cubeMesh );
+ 
+  //レンダリング
+  renderer.render( scene, camera );
+
+  var theta = 0;
+  anim();
+  function anim(){
+    var radian = theta * Math.PI / 180;
+    cubeMesh.rotation.set( radian, radian, radian );
+    theta++;
+    renderer.render( scene, camera );
+    requestAnimationFrame( anim );
+  };
+
+});
+</script>
+</head>
+<body>
+ 
+</body>
+</html>
